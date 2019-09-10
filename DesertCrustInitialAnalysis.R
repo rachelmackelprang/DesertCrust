@@ -87,3 +87,10 @@ invsimp.anova<-aov(InvSimpson ~ Sample.Isolated.From, alpha_for_anova)
 #  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 
+
+#post-hoc tests. ID pairwise groups that are different. Output gives difference in means, confidence levels, and adjusted p-values for all possible pairs.
+tukey.shannon<-TukeyHSD(shannon.anova)
+tukey.InvSimpson<-TukeyHSD(invsimp.anova)
+
+#write.table(tukey.shannon$Sample.Isolated.From, file="tukey.shannon.csv", sep=",")
+#write.table(tukey.InvSimpson$Sample.Isolated.From, file="tukey.invsimp.csv", sep=",")
