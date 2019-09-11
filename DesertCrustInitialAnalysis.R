@@ -50,6 +50,29 @@ propData_bray<-vegdist(propData, "bray")
 adonis(propData_bray ~ CollectionMonth, data = meta_trimmed)
 #Collection month (ie sample site) not significant
 
+
+#adonis(propData_bray ~  CrustLayer+CrustCategory + MossAssociated +CollectionMonth + SoilType, data=meta_trimmed)
+#Call:
+#  adonis(formula = propData_bray ~ CrustLayer + CrustCategory +      MossAssociated + CollectionMonth + SoilType, data = meta_trimmed) 
+
+#Permutation: free
+#Number of permutations: 999
+
+#Terms added sequentially (first to last)
+
+#Df SumsOfSqs  MeanSqs F.Model      R2 Pr(>F)    
+#CrustLayer       2   0.14331 0.071657  2.2497 0.06196  0.047 *  
+#  CrustCategory    1   0.04569 0.045691  1.4345 0.01975  0.215    
+#MossAssociated   1   0.02447 0.024473  0.7684 0.01058  0.499    
+#CollectionMonth  1   0.04688 0.046877  1.4717 0.02027  0.218    
+#SoilType         4   0.46002 0.115006  3.6107 0.19889  0.001 ***
+#  Residuals       50   1.59256 0.031851         0.68854           
+#Total           59   2.31294                  1.00000           
+#---
+#  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+
+
 #interactions between collection month and other variables? 
 adonis(propData_bray ~ CollectionMonth*CrustLayer + CollectionMonth*CrustCategory + CollectionMonth * MossAssociated + CollectionMonth*SoilType,data = meta_trimmed)
 #Call:
@@ -143,28 +166,28 @@ dev.off()
 #compute alpha diversity stats (note that alpha diversity in phyloseq uses count data rather than relative abundance)
 alpha<-estimate_richness(physeq.f,  measures=c("Shannon", "InvSimpson"))
 
-#plot alpha diversity figure
+#plot alpha diversity figure (by soil type)
 p = plot_richness(physeq.f, x = "SoilType", color = "CollectionMonth", measures = c("Shannon", "InvSimpson"))
 p + scale_color_discrete(name="Collection Month") + xlab("")
 
 
-#export alpha diversity figure to pdf
+#export alpha diversity figure to pdf (by soil type)
 pdf("~/Dropbox/GitHub/DesertCrust/alphadiversity_figure.pdf", useDingbats = F)
 p = plot_richness(physeq.f, x = "SoilType", color = "CollectionMonth", measures = c("Shannon", "InvSimpson"))
 p + scale_color_discrete(name="Collection Month") + xlab("") + scale_color_discrete(name="Collection Month") + xlab("")
 dev.off()
 
-#make alpha diveristy boxplot figure
+#make alpha diveristy boxplot figure (by soil type)
 p = plot_richness(physeq.f, x = "SoilType", measures = c("Shannon", "InvSimpson"))
 p + xlab("") + geom_boxplot()
 
-#export alpha diversity boxplot figure to pdf
+#export alpha diversity boxplot figure to pdf (by soil type)
 pdf("~/Dropbox/GitHub/DesertCrust/alphadiversity_boxplotfigure.pdf", useDingbats = F)
 p = plot_richness(physeq.f, x = "SoilType", measures = c("Shannon", "InvSimpson"))
 p + xlab("") + geom_boxplot()
 dev.off()
 
-#anovas and alpha diversity
+#anovas and alpha diversity (by soil type)
 alpha_for_anova<-cbind(sample_data(physeq.f), alpha)
 shannon.anova<-aov(Shannon ~ SoilType, alpha_for_anova)
 invsimp.anova<-aov(InvSimpson ~ SoilType, alpha_for_anova)
@@ -185,10 +208,43 @@ summary(invsimp.anova)
 
 
 
-#post-hoc tests. ID pairwise groups that are different. Output gives difference in means, confidence levels, and adjusted p-values for all possible pairs.
+#post-hoc tests (by soil type). ID pairwise groups that are different. Output gives difference in means, confidence levels, and adjusted p-values for all possible pairs.
 tukey.shannon<-TukeyHSD(shannon.anova)
 tukey.InvSimpson<-TukeyHSD(invsimp.anova)
 
-write.table(tukey.shannon$Sample.Isolated.From, file="tukey.shannon.csv", sep=",")
-write.table(tukey.InvSimpson$Sample.Isolated.From, file="tukey.invsimp.csv", sep=",")
+write.table(tukey.shannon$SoilType, file="tukey.shannon.csv", sep=",")
+write.table(tukey.InvSimpson$SoilType, file="tukey.invsimp.csv", sep=",")
+
+
+#alpha diversity by crust category, moss associated, and crust layer
+shannon_crust.anova<-aov(Shannon ~ CrustCategory, alpha_for_anova) #p = 0.00425
+invsimp_crust.anova<-aov(InvSimpson ~ CrustCategory, alpha_for_anova) #p=0.00397
+
+
+shannon_moss.anova<-aov(Shannon ~ MossAssociated, alpha_for_anova) # not significant
+invsimp_moss.anova<-aov(InvSimpson ~ MossAssociated, alpha_for_anova) # not sig
+
+shannon_layer.anova<-aov(Shannon ~ CrustLayer, alpha_for_anova) #not sig
+invsimp_layer.anova<-aov(InvSimpson ~ CrustLayer, alpha_for_anova) # not significant
+
+pdf("~/Dropbox/GitHub/DesertCrust/alphadiversity_crustcat.pdf", useDingbats = F)
+p = plot_richness(physeq.f, x = "CrustCategory",  measures = c("Shannon", "InvSimpson"))
+p + xlab("") + geom_boxplot()
+dev.off()
+
+pdf("~/Dropbox/GitHub/DesertCrust/alphadiversity_moss.pdf", useDingbats = F)
+p = plot_richness(physeq.f, x = "MossAssociated",  measures = c("Shannon", "InvSimpson"))
+p + xlab("") + geom_boxplot()
+dev.off()
+
+pdf("~/Dropbox/GitHub/DesertCrust/alphadiversity_layer.pdf", useDingbats = F)
+p = plot_richness(physeq.f, x = "CrustLayer",  measures = c("Shannon", "InvSimpson"))
+p + xlab("") + geom_boxplot()
+dev.off()
+
+#posthoc tests for crust category only b/c it was the only one of the three that was sig
+tukey.shannon.crust<-TukeyHSD(shannon_crust.anova) #hypol-biological were sig different. p=0.0044981
+tukey.InvSimpson.crust<-TukeyHSD(invsimp_crust.anova)#hypol-biological were sig different. p = 0.0053616
+
+
 
