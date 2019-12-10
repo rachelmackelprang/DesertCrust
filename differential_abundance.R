@@ -31,7 +31,7 @@ OTU<-otu_table(kegg_counts, taxa_are_rows = TRUE)
 physeq<-phyloseq(OTU, SDATA)
 
 #prune low abundance genes (keep only those observed more than 100 times in at least 10% of samples)
-physeq.f<-filter_taxa(physeq, function(x) sum(x<=100) > (0.01 * length(x)), prune=TRUE)
+physeq.f<-filter_taxa(physeq, function(x) sum(x>100) > (0.01 * length(x)), prune=TRUE)
 
 #extract kegg counts from phyloseq object and change rows to columns and vice versa
 kegg_filtered_t<-as.data.frame(t(otu_table(physeq)))
