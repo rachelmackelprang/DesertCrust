@@ -55,7 +55,7 @@ adonis(propData_bray ~ CollectionMonth, data = meta_trimmed)
 
 #adonis(propData_bray ~  CrustLayer+CrustCategory + MossAssociated +CollectionMonth + SoilType, data=meta_trimmed)
 #Call:
-  #adonis(formula = propData_bray ~ CrustLayer + CrustCategory +      MossAssociated + CollectionMonth + SoilType, data = meta_trimmed) 
+#adonis(formula = propData_bray ~ CrustLayer + CrustCategory +      MossAssociated + CollectionMonth + SoilType, data = meta_trimmed) 
 
 #Permutation: free
 #Number of permutations: 999
@@ -64,7 +64,7 @@ adonis(propData_bray ~ CollectionMonth, data = meta_trimmed)
 
 #Df SumsOfSqs   MeanSqs F.Model      R2 Pr(>F)   
 #CrustLayer       2  0.013645 0.0068226  2.9456 0.07992  0.015 * 
-#  CrustCategory    1  0.004362 0.0043619  1.8832 0.02555  0.126   
+#CrustCategory    1  0.004362 0.0043619  1.8832 0.02555  0.126   
 #MossAssociated   1  0.001554 0.0015543  0.6711 0.00910  0.577   
 #CollectionMonth  1  0.003460 0.0034599  1.4937 0.02026  0.199   
 #SoilType         4  0.031902 0.0079754  3.4432 0.18685  0.002 **
@@ -120,6 +120,28 @@ adonis(propData_bray ~ CrustCategory*MossAssociated*CrustLayer, data = meta_trim
 #Total                                   59  0.170736                   1.00000           
 #---
 #  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+
+#interaction between crust category and moss associated
+adonis(propData_bray ~ CrustCategory*MossAssociated, data = meta_trimmed)
+#Call:
+#  adonis(formula = propData_bray ~ CrustCategory * MossAssociated,      data = meta_trimmed) 
+
+#Permutation: free
+#Number of permutations: 999
+
+#Terms added sequentially (first to last)
+
+#Df SumsOfSqs   MeanSqs F.Model      R2 Pr(>F)    
+#CrustCategory                 2  0.015036 0.0075179  3.0602 0.08806  0.011 *  
+#  MossAssociated                1  0.001553 0.0015527  0.6320 0.00909  0.591    
+#CrustCategory:MossAssociated  1  0.019032 0.0190315  7.7469 0.11147  0.001 ***
+#  Residuals                    55  0.135116 0.0024566         0.79137           
+#Total                        59  0.170736                   1.00000           
+#---
+#  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+
 
 
 #ordinations
