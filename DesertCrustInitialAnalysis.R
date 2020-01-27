@@ -147,12 +147,12 @@ adonis(propData_bray ~ CrustCategory*MossAssociated, data = meta_trimmed)
 #ordinations
 
 ord_bray.pcoa<-ordinate(physeq.f.ra, "PCoA", "bray")
-ord_bray.nmds<-ordinate(physeq.f.ra, "NMDS", "bray") # no convergance for the NMDS. Don't use these data
+ord_bray.nmds<-ordinate(physeq.f.ra, "NMDS", "bray", trymax=200)
 p=plot_ordination(physeq.f.ra, ord_bray.pcoa, color="CrustCategory", shape="CollectionMonth")
 p+geom_point(size=3, alpha=0.75) + theme(plot.title=element_text(size=16, face="bold, vjust =2"))
 
-p=plot_ordination(physeq.f.ra, ord_bray.pcoa, color="CrustCategory", shape="CollectionMonth")
-p+geom_point(size=3, alpha=0.75) + theme(plot.title=element_text(size=16, face="bold, vjust =2")) #don't use these data. no convergance
+p=plot_ordination(physeq.f.ra, ord_bray.nmds, color="CrustCategory", shape="CollectionMonth")
+p+geom_point(size=3, alpha=0.75) + theme(plot.title=element_text(size=16, face="bold, vjust =2")) 
 
 
 
@@ -184,6 +184,8 @@ dev.off()
 #######################
 ####Alpha Diversity####
 #######################
+
+
 
 #compute alpha diversity stats (note that alpha diversity in phyloseq uses count data rather than relative abundance)
 alpha<-estimate_richness(physeq.f,  measures=c("Shannon", "InvSimpson"))
