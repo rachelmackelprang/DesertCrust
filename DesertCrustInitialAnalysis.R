@@ -45,39 +45,14 @@ physeq.f.ra<-transform_sample_counts(physeq.f, function(x) x*100/sum(x))
 propData<-as.data.frame(t(otu_table(physeq.f.ra)))
 
 #############################
-#######Beta diversity########
+#######Diversity Stats########
 #############################
 
 propData_bray<-vegdist(propData, "bray")
-adonis(propData_bray ~ CollectionMonth, data = meta_trimmed)
-#Collection month (ie sample site) not significant
+adonis(formula = propData_bray ~ CollectionMonth*CrustCategory*MossAssociated*CrustLayer, data=meta_trimmed)
 
-
-#adonis(propData_bray ~  CrustLayer+CrustCategory + MossAssociated +CollectionMonth + SoilType, data=meta_trimmed)
 #Call:
-#adonis(formula = propData_bray ~ CrustLayer + CrustCategory +      MossAssociated + CollectionMonth + SoilType, data = meta_trimmed) 
-
-#Permutation: free
-#Number of permutations: 999
-
-#Terms added sequentially (first to last)
-
-#Df SumsOfSqs   MeanSqs F.Model      R2 Pr(>F)   
-#CrustLayer       2  0.013645 0.0068226  2.9456 0.07992  0.015 * 
-#CrustCategory    1  0.004362 0.0043619  1.8832 0.02555  0.126   
-#MossAssociated   1  0.001554 0.0015543  0.6711 0.00910  0.577   
-#CollectionMonth  1  0.003460 0.0034599  1.4937 0.02026  0.199   
-#SoilType         4  0.031902 0.0079754  3.4432 0.18685  0.002 **
-#  Residuals       50  0.115813 0.0023163         0.67832          
-#Total           59  0.170736                   1.00000          
-#---
-#  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-
-#interactions between collection month and other variables? 
-#adonis(propData_bray ~ CollectionMonth*CrustLayer + CollectionMonth*CrustCategory + CollectionMonth * MossAssociated + CollectionMonth*SoilType,data = meta_trimmed)
-#Call:
-#  adonis(formula = propData_bray ~ CollectionMonth * CrustLayer +      CollectionMonth * CrustCategory + CollectionMonth * MossAssociated +      CollectionMonth * SoilType, data = meta_trimmed) 
+#  adonis(formula = propData_bray ~ CollectionMonth * CrustCategory *      MossAssociated * CrustLayer, data = meta_trimmed) 
 
 #Permutation: free
 #Number of permutations: 999
@@ -85,59 +60,23 @@ adonis(propData_bray ~ CollectionMonth, data = meta_trimmed)
 #Terms added sequentially (first to last)
 
 #Df SumsOfSqs   MeanSqs F.Model      R2 Pr(>F)    
-#CollectionMonth                 1  0.002923 0.0029234  1.3929 0.01712  0.216    
-#CrustLayer                      2  0.014253 0.0071263  3.3954 0.08348  0.013 *  
-#  CrustCategory                   1  0.004433 0.0044331  2.1122 0.02596  0.102    
-#MossAssociated                  1  0.001412 0.0014123  0.6729 0.00827  0.586    
-#SoilType                        4  0.031902 0.0079754  3.8000 0.18685  0.001 ***
-#  CollectionMonth:CrustLayer      2  0.002342 0.0011712  0.5581 0.01372  0.683    
-#CollectionMonth:CrustCategory   1  0.009617 0.0096170  4.5822 0.05633  0.009 ** 
-#  CollectionMonth:MossAssociated  1  0.007119 0.0071190  3.3920 0.04170  0.025 *  
-#  CollectionMonth:SoilType        4  0.008586 0.0021464  1.0227 0.05029  0.397    
-#Residuals                      42  0.088149 0.0020988         0.51629           
-#Total                          59  0.170736                   1.00000           
-#---
-#  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-adonis(propData_bray ~ CrustCategory*MossAssociated*CrustLayer, data = meta_trimmed)
-#Call:
-#  adonis(formula = propData_bray ~ CrustCategory * MossAssociated *      CrustLayer, data = meta_trimmed) 
-
-#Permutation: free
-#Number of permutations: 999
-
-#Terms added sequentially (first to last)
-
-#Df SumsOfSqs   MeanSqs F.Model      R2 Pr(>F)    
-#CrustCategory                            2  0.015036 0.0075179  3.2104 0.08806  0.014 *  
-#  MossAssociated                           1  0.001553 0.0015527  0.6630 0.00909  0.546    
-#CrustLayer                               1  0.002973 0.0029731  1.2696 0.01741  0.265    
-#CrustCategory:MossAssociated             1  0.018856 0.0188563  8.0522 0.11044  0.001 ***
-#  CrustCategory:CrustLayer                 1  0.004315 0.0043154  1.8428 0.02528  0.127    
-#MossAssociated:CrustLayer                1  0.006930 0.0069305  2.9595 0.04059  0.034 *  
-#  CrustCategory:MossAssociated:CrustLayer  1  0.001642 0.0016420  0.7012 0.00962  0.550    
-#Residuals                               51  0.119430 0.0023418         0.69950           
-#Total                                   59  0.170736                   1.00000           
-#---
-#  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-
-#interaction between crust category and moss associated
-adonis(propData_bray ~ CrustCategory*MossAssociated, data = meta_trimmed)
-#Call:
-#  adonis(formula = propData_bray ~ CrustCategory * MossAssociated,      data = meta_trimmed) 
-
-#Permutation: free
-#Number of permutations: 999
-
-#Terms added sequentially (first to last)
-
-#Df SumsOfSqs   MeanSqs F.Model      R2 Pr(>F)    
-#CrustCategory                 2  0.015036 0.0075179  3.0602 0.08806  0.011 *  
-#  MossAssociated                1  0.001553 0.0015527  0.6320 0.00909  0.591    
-#CrustCategory:MossAssociated  1  0.019032 0.0190315  7.7469 0.11147  0.001 ***
-#  Residuals                    55  0.135116 0.0024566         0.79137           
-#Total                        59  0.170736                   1.00000           
+#CollectionMonth                                          1  0.002923 0.0029234  1.3929 0.01712  0.206    
+#CrustCategory                                            2  0.016593 0.0082963  3.9529 0.09718  0.004 ** 
+#  ossAssociated                                           1  0.001398 0.0013983  0.6662 0.00819  0.565    
+#CrustLayer                                               1  0.002107 0.0021070  1.0039 0.01234  0.404    
+#CollectionMonth:CrustCategory                            2  0.011309 0.0056543  2.6941 0.06623  0.032 *  
+#  CollectionMonth:MossAssociated                           1  0.002392 0.0023915  1.1395 0.01401  0.315    
+#CrustCategory:MossAssociated                             1  0.019497 0.0194970  9.2897 0.11419  0.001 ***
+# CollectionMonth:CrustLayer                               1  0.001743 0.0017430  0.8305 0.01021  0.461    
+#CrustCategory:CrustLayer                                 1  0.004917 0.0049166  2.3426 0.02880  0.079 .  
+#MossAssociated:CrustLayer                                1  0.009472 0.0094717  4.5130 0.05548  0.015 *  
+#CollectionMonth:CrustCategory:MossAssociated             1  0.000325 0.0003251  0.1549 0.00190  0.980    
+#CollectionMonth:CrustCategory:CrustLayer                 1  0.002562 0.0025623  1.2209 0.01501  0.277    
+#CollectionMonth:MossAssociated:CrustLayer                1  0.002885 0.0028852  1.3747 0.01690  0.210    
+#CrustCategory:MossAssociated:CrustLayer                  1  0.002000 0.0019995  0.9527 0.01171  0.372    
+#CollectionMonth:CrustCategory:MossAssociated:CrustLayer  1  0.002465 0.0024652  1.1746 0.01444  0.299    
+#Residuals                                               42  0.088149 0.0020988         0.51629           
+#Total                                                   59  0.170736                   1.00000           
 #---
 #  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
@@ -148,28 +87,17 @@ adonis(propData_bray ~ CrustCategory*MossAssociated, data = meta_trimmed)
 
 ord_bray.pcoa<-ordinate(physeq.f.ra, "PCoA", "bray")
 ord_bray.nmds<-ordinate(physeq.f.ra, "NMDS", "bray", trymax=200)
-p=plot_ordination(physeq.f.ra, ord_bray.pcoa, color="CrustCategory", shape="CollectionMonth")
-p+geom_point(size=3, alpha=0.75) + theme(plot.title=element_text(size=16, face="bold, vjust =2"))
-
-p=plot_ordination(physeq.f.ra, ord_bray.nmds, color="CrustCategory", shape="CollectionMonth")
-p+geom_point(size=3, alpha=0.75) + theme(plot.title=element_text(size=16, face="bold, vjust =2")) 
-
-
-
-pdf("~/Dropbox/GitHub/DesertCrust/pcoa_month_type.pdf", useDingbats = F)
-p=plot_ordination(physeq.f.ra, ord_bray.pcoa, color="SoilType", shape="CollectionMonth")
-p+geom_point(size=3, alpha=0.75) + theme(plot.title=element_text(size=16, face="bold, vjust =2"))
-dev.off()
-
-pdf("~/Dropbox/GitHub/DesertCrust/nmds_month_type.pdf", useDingbats = F)
-p=plot_ordination(physeq.f.ra, ord_bray.nmds, color="SoilType", shape="CollectionMonth")
-p+geom_point(size=3, alpha=0.75) + theme(plot.title=element_text(size=16, face="bold, vjust =2"))
-dev.off()
 
 pdf("~/Dropbox/GitHub/DesertCrust/pcoa_month_crustcategory.pdf", useDingbats = F)
 p=plot_ordination(physeq.f.ra, ord_bray.pcoa, color="CrustCategory", shape="CollectionMonth")
 p+geom_point(size=3, alpha=0.75) + theme(plot.title=element_text(size=16, face="bold, vjust =2"))
 dev.off()
+
+pdf("~/Dropbox/GitHub/DesertCrust/nmds_month_crustcategory.pdf", useDingbats = F)
+p=plot_ordination(physeq.f.ra, ord_bray.nmds, color="CrustCategory", shape="CollectionMonth")
+p+geom_point(size=3, alpha=0.75) + theme(plot.title=element_text(size=16, face="bold, vjust =2")) 
+dev.off()
+
 
 pdf("~/Dropbox/GitHub/DesertCrust/pcoa_moss_crustcategory.pdf", useDingbats = F)
 p=plot_ordination(physeq.f.ra, ord_bray.pcoa, color="CrustCategory", shape="MossAssociated")
@@ -180,6 +108,10 @@ pdf("~/Dropbox/GitHub/DesertCrust/nmds_moss_crustcategory.pdf", useDingbats = F)
 p=plot_ordination(physeq.f.ra, ord_bray.nmds, color="CrustCategory", shape="MossAssociated")
 p+geom_point(size=3, alpha=0.75) + theme(plot.title=element_text(size=16, face="bold, vjust =2"))
 dev.off()
+
+
+
+
 
 #######################
 ####Alpha Diversity####
