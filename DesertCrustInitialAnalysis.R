@@ -36,23 +36,24 @@ physeq<-phyloseq(OTU, SDATA)
 #prune low abundance genes (keep only those observed more than 100 times in at least 10% of samples)
 physeq.f<-filter_taxa(physeq, function(x) sum(x>100) > (0.01 * length(x)), prune=TRUE)
 
-#function(x) sum(x>100) > (0.1 * length(x))
-
 #get relative abundance
 physeq.f.ra<-transform_sample_counts(physeq.f, function(x) x*100/sum(x))
 
-#extract kegg relative abundance table from phyloseq object and change rows to columns and vice versa
-propData<-as.data.frame(t(otu_table(physeq.f.ra)))
+
+
 
 #############################
 #######Diversity Stats########
 #############################
 
+#extract kegg relative abundance table from phyloseq object and change rows to columns and vice versa. Get bray-curtis dissimilarities and run a PERMANOVA. 
+propData<-as.data.frame(t(otu_table(physeq.f.ra)))
 propData_bray<-vegdist(propData, "bray")
+
 adonis(formula = propData_bray ~ CollectionMonth*CrustCategory*MossAssociated*CrustLayer, data=meta_trimmed)
 
 #Call:
-#  adonis(formula = propData_bray ~ CollectionMonth * CrustCategory *      MossAssociated * CrustLayer, data = meta_trimmed) 
+#adonis(formula = propData_bray ~ CollectionMonth * CrustCategory *      MossAssociated * CrustLayer, data = meta_trimmed) 
 
 #Permutation: free
 #Number of permutations: 999
@@ -62,10 +63,10 @@ adonis(formula = propData_bray ~ CollectionMonth*CrustCategory*MossAssociated*Cr
 #Df SumsOfSqs   MeanSqs F.Model      R2 Pr(>F)    
 #CollectionMonth                                          1  0.002923 0.0029234  1.3929 0.01712  0.206    
 #CrustCategory                                            2  0.016593 0.0082963  3.9529 0.09718  0.004 ** 
-#  ossAssociated                                           1  0.001398 0.0013983  0.6662 0.00819  0.565    
+#MossAssociated                                           1  0.001398 0.0013983  0.6662 0.00819  0.565    
 #CrustLayer                                               1  0.002107 0.0021070  1.0039 0.01234  0.404    
 #CollectionMonth:CrustCategory                            2  0.011309 0.0056543  2.6941 0.06623  0.032 *  
-#  CollectionMonth:MossAssociated                           1  0.002392 0.0023915  1.1395 0.01401  0.315    
+#CollectionMonth:MossAssociated                           1  0.002392 0.0023915  1.1395 0.01401  0.315    
 #CrustCategory:MossAssociated                             1  0.019497 0.0194970  9.2897 0.11419  0.001 ***
 # CollectionMonth:CrustLayer                               1  0.001743 0.0017430  0.8305 0.01021  0.461    
 #CrustCategory:CrustLayer                                 1  0.004917 0.0049166  2.3426 0.02880  0.079 .  
@@ -110,7 +111,21 @@ p+geom_point(size=3, alpha=0.75) + theme(plot.title=element_text(size=16, face="
 dev.off()
 
 
+#subset hypolithic
+hypo_physeq<-subset_samples(physeq.f.ra, CrustCategory == "Hypolithic")
+hypo_ord_bray_pcoa<-ordinate(hypo_physeq, "PCoA", "bray")
+pdf("~/Dropbox/GitHub/DesertCrust/pcoa_hypoOnly_moss.pdf", useDingbats = F)
+p=plot_ordination(hypo_physeq, hypo_ord_bray_pcoa, color="MossAssociated")
+p+geom_point(size=3, alpha=0.75) + theme(plot.title=element_text(size=16, face="bold, vjust =2"))
+dev.off()
 
+#subset biological
+bio_physeq<-subset_samples(physeq.f.ra, CrustCategory == "Biological")
+bio_ord_bray_pcoa<-ordinate(bio_physeq, "PCoA", "bray")
+pdf("~/Dropbox/GitHub/DesertCrust/pcoa_bioOnly_moss.pdf", useDingbats = F)
+p=plot_ordination(bio_physeq, bio_ord_bray_pcoa, color="MossAssociated")
+p+geom_point(size=3, alpha=0.75) + theme(plot.title=element_text(size=16, face="bold, vjust =2"))
+dev.off()
 
 
 #######################
