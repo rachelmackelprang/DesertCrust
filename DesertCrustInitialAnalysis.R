@@ -166,6 +166,11 @@ topTags(crust_edgeR)
 #K12428 -1.2209972  1.12455337 20.16179 7.116028e-06 4.600908e-03
 #K00622 -1.0666923 -0.02473427 19.94313 7.977993e-06 4.642394e-03
 
+
+crust_edgeR_allgenes<-topTags(crust_edgeR, n=Inf)
+write.table(crust_edgeR_allgenes, file="crust_edgeR_allgenes.csv", sep=",")
+
+
 moss_edgeR<-glm.edgeR(x=kmap_com$MossAssociated, Y=kegg_com)
 topTags(moss_edgeR)
 
@@ -182,7 +187,8 @@ topTags(moss_edgeR)
 #K12152 -1.9547038 2.296937 54.06739 1.937301e-13 1.252573e-10
 #K05941 -1.0397122 3.071106 52.14732 5.148900e-13 2.996145e-10
 
-
+moss_edgeR_allgenes<-topTags(moss_edgeR, n=Inf)
+write.table(moss_edgeR_allgenes, file="moss_edgeR_allgenes.csv", sep=",")
 
 #######################
 ####Alpha Diversity####
@@ -258,14 +264,20 @@ invsimp_moss.anova<-aov(InvSimpson ~ MossAssociated, alpha_for_anova) #not signi
 shannon_layer.anova<-aov(Shannon ~ CrustLayer, alpha_for_anova) #p=5.79e-01
 invsimp_layer.anova<-aov(InvSimpson ~ CrustLayer, alpha_for_anova) # p=0.00469
 
+shannon_type.anova<-aov(Shannon~SoilType, alpha_for_anova) #p=7.29e-10
+invsimp_type.anova<-aov(InvSimpson ~ SoilType, alpha_for_anova) #p=1.29e-09
+
 
 #post-hoc tests. ID pairwise groups that are different. Output gives difference in means, confidence levels, and adjusted p-values for all possible pairs.
 tukey.InvSimpson<-TukeyHSD(invsimp_layer.anova)
 tukey.shannon<-TukeyHSD(shannon_layer.anova)
+tukey.type.InvSimpson<-TukeyHSD(invsimp_type.anova)
+tukey.type.shannon<-TukeyHSD(shannon_type.anova)
 
 write.table(tukey.InvSimpson$CrustLayer, file="tukey.invsimp.crustlayer.csv", sep=",")
 write.table(tukey.shannon$CrustLayer, file="tukey.shannon.crustlayer.csv", sep=",")
-
+write.table(tukey.type.InvSimpson$SoilType, file="tukey.type.invsimp.csv", sep=",")
+write.table(tukey.type.shannon$SoilType, file="tukey.type.shannon.csv", sep=",")
 
 
 
