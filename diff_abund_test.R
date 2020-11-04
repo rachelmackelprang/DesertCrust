@@ -1,4 +1,5 @@
 #Differential abundance analysis use edgeR
+#This identifies genes that are significantly different between sample types
 
 #load libraries
 library(tidyverse)
