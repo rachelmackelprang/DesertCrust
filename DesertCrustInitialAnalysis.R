@@ -43,7 +43,6 @@ physeq.f.ra<-transform_sample_counts(physeq.f, function(x) x*100/sum(x))
 
 
 
-
 #############################
 #######Diversity Stats########
 #############################
@@ -126,69 +125,9 @@ bio_physeq<-subset_samples(physeq.f.ra, CrustCategory == "Biological")
 bio_ord_bray_pcoa<-ordinate(bio_physeq, "PCoA", "bray")
 pdf("~/Dropbox/GitHub/DesertCrust/pcoa_bioOnly_moss.pdf", useDingbats = F)
 p=plot_ordination(bio_physeq, bio_ord_bray_pcoa, color="MossAssociated")
-p+geom_point(size=3, alpha=0.75) + theme(plot.title=element_text(size=16, face="bold, vjust =2"))
 dev.off()
 
 
-
-################################################
-#####Differential abundance analysis############
-################################################
-
-#Need count matrix for edgeR. Extract from phyloseq object
-kegg_counts<-as.data.frame(t(otu_table(physeq.f)))
-
-#It is important to ensure your kegg table and metadata table samples IDs are lined up correctly. 
-#Find the overlapping samples and get just the overlapping samples.
-kcommon.ids<-intersect(rownames(meta_trimmed), rownames(kegg_counts))
-kegg_com<-kegg_counts[kcommon.ids,]
-kmap_com<-meta_trimmed[kcommon.ids,]
-
-#use a negative binomial distribution to ID differentially abundant genes. 
-#Load edgeR wrapper
-
-library(edgeR)
-source("~/Dropbox/PermafrostProjects/Permafrost_Global/Stats_exploration/edgeR.wrapper.r")
-
-crust_edgeR<-glm.edgeR(x=kmap_com$CrustCategory, Y=kegg_com)
-
-#get top results
-topTags(crust_edgeR)
-#logFC      logCPM       LR       PValue          FDR
-#K16023 -3.3120311 -0.91161650 53.16360 3.068932e-13 1.785812e-09
-#K11081 -2.0085715 -0.98457446 40.47257 1.993957e-10 5.801419e-07
-#K15672 -1.8704153  1.58393743 30.97057 2.619702e-08 5.081349e-05
-#K14743 -1.0581863  3.13486237 22.25206 2.391022e-06 3.478339e-03
-#K16106 -0.9282737  0.51528524 20.94865 4.717606e-06 4.441608e-03
-#K14339 -0.6382925  4.21764275 20.84739 4.973684e-06 4.441608e-03
-#K13669 -0.9534547  0.92015053 20.71020 5.343059e-06 4.441608e-03
-#K03822 -0.7544529  4.85275008 20.41466 6.235031e-06 4.535206e-03
-#K12428 -1.2209972  1.12455337 20.16179 7.116028e-06 4.600908e-03
-#K00622 -1.0666923 -0.02473427 19.94313 7.977993e-06 4.642394e-03
-
-
-crust_edgeR_allgenes<-topTags(crust_edgeR, n=Inf)
-write.table(crust_edgeR_allgenes, file="crust_edgeR_allgenes.csv", sep=",")
-
-
-moss_edgeR<-glm.edgeR(x=kmap_com$MossAssociated, Y=kegg_com)
-topTags(moss_edgeR)
-
-#Coefficient:  xY 
-#logFC   logCPM       LR       PValue          FDR
-#K08966 -2.3692693 3.337318 65.18864 6.806067e-16 3.960451e-12
-#K19694 -1.7839014 5.510622 62.05084 3.347042e-15 7.345485e-12
-#K13730 -1.6089053 7.480156 61.80766 3.786983e-15 7.345485e-12
-#K13472 -1.6443936 3.811362 60.86518 6.112030e-15 8.891476e-12
-#K11751 -0.9221005 5.023282 58.70328 1.833355e-14 2.133658e-11
-#K19144 -1.9349088 3.030475 57.08036 4.183629e-14 4.057423e-11
-#K01481 -1.4284620 4.496845 54.90192 1.266970e-13 1.053214e-10
-#K02723 -2.1232992 1.105740 54.15105 1.856544e-13 1.252573e-10
-#K12152 -1.9547038 2.296937 54.06739 1.937301e-13 1.252573e-10
-#K05941 -1.0397122 3.071106 52.14732 5.148900e-13 2.996145e-10
-
-moss_edgeR_allgenes<-topTags(moss_edgeR, n=Inf)
-write.table(moss_edgeR_allgenes, file="moss_edgeR_allgenes.csv", sep=",")
 
 #######################
 ####Alpha Diversity####
